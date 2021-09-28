@@ -5,9 +5,5 @@ library(tibble)# un package tidyverse nécessaire
 library(dplyr)# un autre package tidyverse nécessaire
 library(shiny)
 library(gapminder)
-<<<<<<< Updated upstream
-
 #https://www.kaggle.com/amritvirsinghx/web-series-ultimate-edition
-=======
-library(lubridate)
->>>>>>> Stashed changes
+
