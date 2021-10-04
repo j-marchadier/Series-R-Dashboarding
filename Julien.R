@@ -19,6 +19,8 @@ df<- read_csv("Web_series_data.csv",
 data = df %>% select(-c(tags,languages,actors,view_rating,rotten_tomatoes_score,metacritic_score,production_house,netflix_link,imdb_link,tmdb_trailer,trailer_site))
 view(data)
 
+unique(data$run_time)
+
 data$nb_seasons <- data$nb_seasons %>% str_replace("Seasons","") %>% str_replace("Season","") %>% str_replace(" ","") 
 data$nb_seasons <- data$nb_seasons %>%  as.integer()
 
