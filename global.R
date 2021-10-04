@@ -1,5 +1,7 @@
 #Loading the packages we need
 source("./packages.R")
+
+
 #Reading the csv file and setting types
 data <- read_csv("All_Streaming_Shows.csv", 
                  col_names = c("title","year","content_rating","imdb_rating","r_rating","genre","description","nb_seasons","streaming_platform"),
