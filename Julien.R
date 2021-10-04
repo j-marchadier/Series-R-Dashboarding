@@ -7,15 +7,15 @@ data <- read_csv("Web_series_data.csv",
                  col_names = c("title","genre","tags","languages","series_ormouvies","hidden_gem_score",
                                "country_availability","run_time","director","writer","actors",
                                "view_rating","imdb_scrore","rotten_tomatoes_score","metacritic_score",
-                               "awards_received","awards_nominated","box_office","release_date",
+                               "awards_received","awards_nominated","box_office","release_date","netflix_date",
                                "production_house","netflix_link","imdb_link",'summary',"imdb_vote","image",
                                "poster","tmdb_trailer","trailer_site"),
-                 col_types = "cffffdcccccccddddccccccdcccc",
+                 col_types = "cffffdcccccccddddcccccccdcccc",
                  skip =1)
 view(data)
+
 #We at first clean the dataset :
 #Our first step is to change the type of the number of seasons into an integer and delete all the characters
-
 data$nb_seasons <- data$nb_seasons %>% str_replace("Seasons","") %>% str_replace("Season","") %>% str_replace(" ","") 
 data$nb_seasons <- data$nb_seasons %>%  as.integer()
 
