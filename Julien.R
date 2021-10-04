@@ -3,7 +3,7 @@ source("./packages.R")
 
 
 #Reading the csv file and setting types
-data <- read_csv("Web_series_data.csv", 
+df<- read_csv("Web_series_data.csv", 
                  col_names = c("title","genre","tags","languages","series_ormouvies","hidden_gem_score",
                                "country_availability","run_time","director","writer","actors",
                                "view_rating","imdb_scrore","rotten_tomatoes_score","metacritic_score",
@@ -12,10 +12,13 @@ data <- read_csv("Web_series_data.csv",
                                "poster","tmdb_trailer","trailer_site"),
                  col_types = "cffffdcccccccddddcccccccdcccc",
                  skip =1)
-view(data)
+
 
 #We at first clean the dataset :
 #Our first step is to change the type of the number of seasons into an integer and delete all the characters
+data = select(df , -c(tags,languages,actors,view_rating,rotten_tomatoes_score,metacritic_score,production_house,netflix_link,imdb_link,tmdb_trailer,trailer_site))
+view(data)
+
 data$nb_seasons <- data$nb_seasons %>% str_replace("Seasons","") %>% str_replace("Season","") %>% str_replace(" ","") 
 data$nb_seasons <- data$nb_seasons %>%  as.integer()
 
