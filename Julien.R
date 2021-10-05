@@ -35,13 +35,14 @@ all_country_availability = unlist(strsplit(data$country_availability[5], ","))
 data_country_availability = data %>% select(-c(genre,series_or_movies,hidden_gem_score,run_time,director,writer,imdb_scrore,awards_received,awards_nominated,box_office,release_netflix_year,summary,imdb_vote,image,poster))
 
 #function 
-data_country_availability =clean_multiple_values(all_country_availability,data_country_availability,data$country_availability)
+data_country_availability = clean_multiple_values(all_country_availability,data_country_availability,data$country_availability)
 data_country_availability = data_country_availability %>% select(-c(country_availability))
 view(head(data))
 
-########### Clean CWriter ############
-a = unlist(lapply(data$writer, function(x) length(unlist(strsplit(x, ",")))))
-data$writer[502]
+########### Clean Writer ############
+all_writer = unlist(lapply(data$writer, function(x) length(unlist(strsplit(x, ",")))))
+
+
 #data_genres <- data %>% separate(genre,c("genre_1","genre_2","genre_3","genre_4","genre_5","genre_6"),",",TRUE)
 #data$nb_seasons <- data$nb_seasons %>% str_replace("Seasons","") %>% str_replace("Season","") %>% str_replace(" ","") 
 #data$nb_seasons <- data$nb_seasons %>%  as.integer()
