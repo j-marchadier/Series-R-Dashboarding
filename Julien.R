@@ -1,5 +1,6 @@
 #Loading the packages we need
 source("./packages.R")
+source("./functions.R")
 
 
 #Reading the csv file and setting types
@@ -29,23 +30,18 @@ colnames(data)[14] <- "release_netflix_year"
 #On remove le Dollar de boxoffice
 data= data %>% mutate(data,box_office=substr(box_office,2,15))
 
-###########
+########### Clean Country available ############
 all_country_availability = unlist(strsplit(data$country_availability[5], ","))
 data_country_availability = data %>% select(-c(genre,series_or_movies,hidden_gem_score,run_time,director,writer,imdb_scrore,awards_received,awards_nominated,box_office,release_netflix_year,summary,imdb_vote,image,poster))
 
-for (country in all_country_availability){
-  v <- data_country_availability %>% 
-    add_column(i = if_else(grepl(country, data$country_availability, fixed=TRUE), 
-                             TRUE, FALSE)) %>%
-    dplyr::select(i)
-  data_country_availability[, country] <- v
-}
+#function 
+data_country_availability =clean_multiple_values(all_country_availability,data_country_availability,data$country_availability)
 data_country_availability = data_country_availability %>% select(-c(country_availability))
-
 view(head(data))
 
-
-#data_country_availability_count = unlist(lapply(data$country_availability, function(x) length(unlist(strsplit(x, ",")))))
+########### Clean CWriter ############
+a = unlist(lapply(data$writer, function(x) length(unlist(strsplit(x, ",")))))
+data$writer[502]
 #data_genres <- data %>% separate(genre,c("genre_1","genre_2","genre_3","genre_4","genre_5","genre_6"),",",TRUE)
 #data$nb_seasons <- data$nb_seasons %>% str_replace("Seasons","") %>% str_replace("Season","") %>% str_replace(" ","") 
 #data$nb_seasons <- data$nb_seasons %>%  as.integer()
