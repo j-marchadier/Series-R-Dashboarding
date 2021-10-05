@@ -10,7 +10,7 @@ df<- read_csv("Web_series_data.csv",
                                "awards_received","awards_nominated","box_office","release_date","netflix_date",
                                "production_house","netflix_link","imdb_link",'summary',"imdb_vote","image",
                                "poster","tmdb_trailer","trailer_site"),
-                 col_types = "cffffdcfcccccddddcccccccdcccc",
+                 col_types = "cffffdcffccccddddcccccccdcccc",
                  skip =1)
 
 
@@ -29,11 +29,25 @@ colnames(data)[14] <- "release_netflix_year"
 #On remove le Dollar de boxoffice
 data= data %>% mutate(data,box_office=substr(box_office,2,15))
 
-#For the column Genre, we split it into two different columns since each serie can have 2 differents Genres
-data_genres <- data %>% separate(genre,c("genre_1","genre_2","genre_3","genre_4","genre_5","genre_6"),",",TRUE)
+###########
+all_country_availability = unlist(strsplit(data$country_availability[5], ","))
+data_country_availability = data
+for (country in all_country_availability){
+  print(country)
+  v <- data_country_availability %>% 
+    add_column(i = if_else(grepl(country, data$country_availability, fixed=TRUE), 
+                             TRUE, FALSE)) %>%
+    dplyr::select(i)
+  data_country_availability[, country] <- v
+}
 
 
-view(head(data))
+#data_country_availability <- data %>% add_column(france = if_else(grepl("France", data$country_availability, fixed=TRUE), TRUE, FALSE))
+view(head(data_country_availability))
 
+
+
+#data_country_availability_count = unlist(lapply(data$country_availability, function(x) length(unlist(strsplit(x, ",")))))
+#data_genres <- data %>% separate(genre,c("genre_1","genre_2","genre_3","genre_4","genre_5","genre_6"),",",TRUE)
 #data$nb_seasons <- data$nb_seasons %>% str_replace("Seasons","") %>% str_replace("Season","") %>% str_replace(" ","") 
 #data$nb_seasons <- data$nb_seasons %>%  as.integer()
