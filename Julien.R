@@ -4,7 +4,7 @@ source("./packages.R")
 
 #Reading the csv file and setting types
 df<- read_csv("Web_series_data.csv", 
-                 col_names = c("title","genre","tags","languages","series_ormouvies","hidden_gem_score",
+                 col_names = c("title","genre","tags","languages","series_or_movies","hidden_gem_score",
                                "country_availability","run_time","director","writer","actors",
                                "view_rating","imdb_scrore","rotten_tomatoes_score","metacritic_score",
                                "awards_received","awards_nominated","box_office","release_date","netflix_date",
@@ -31,20 +31,18 @@ data= data %>% mutate(data,box_office=substr(box_office,2,15))
 
 ###########
 all_country_availability = unlist(strsplit(data$country_availability[5], ","))
-data_country_availability = data
+data_country_availability = data %>% select(-c(genre,series_or_movies,hidden_gem_score,run_time,director,writer,imdb_scrore,awards_received,awards_nominated,box_office,release_netflix_year,summary,imdb_vote,image,poster))
+
 for (country in all_country_availability){
-  print(country)
   v <- data_country_availability %>% 
     add_column(i = if_else(grepl(country, data$country_availability, fixed=TRUE), 
                              TRUE, FALSE)) %>%
     dplyr::select(i)
   data_country_availability[, country] <- v
 }
+data_country_availability = data_country_availability %>% select(-c(country_availability))
 
-
-#data_country_availability <- data %>% add_column(france = if_else(grepl("France", data$country_availability, fixed=TRUE), TRUE, FALSE))
 view(head(data_country_availability))
-
 
 
 #data_country_availability_count = unlist(lapply(data$country_availability, function(x) length(unlist(strsplit(x, ",")))))
