@@ -42,7 +42,7 @@ for (country in all_country_availability){
 }
 data_country_availability = data_country_availability %>% select(-c(country_availability))
 
-view(head(data_country_availability))
+view(head(data))
 
 
 #data_country_availability_count = unlist(lapply(data$country_availability, function(x) length(unlist(strsplit(x, ",")))))
