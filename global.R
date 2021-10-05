@@ -45,8 +45,9 @@ data_genre_availability = data %>% select(-c(series_or_movies,country_availabili
 #function
 data_genre_availability = clean_multiple_values(vecteur_genre,data_genre_availability,data$genre)
 data_genre_availability = data_genre_availability %>% select(-c(genre))
- 
 
+data_merge <- merge(data,data_genre_availability,by=c("title","release_year")) %>% merge(data_country_availability,by=c("title","release_year"))
+view(head(data_merge))
 
 
 
