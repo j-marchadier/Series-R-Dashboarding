@@ -10,7 +10,7 @@ df<- read_csv("Web_series_data.csv",
                                "awards_received","awards_nominated","box_office","release_date","netflix_date",
                                "production_house","netflix_link","imdb_link",'summary',"imdb_vote","image",
                                "poster","tmdb_trailer","trailer_site"),
-                 col_types = "cffffdcccccccddddcccccccdcccc",
+                 col_types = "cffffdcfcccccddddcccccccdcccc",
                  skip =1)
 
 
@@ -18,8 +18,16 @@ df<- read_csv("Web_series_data.csv",
 #Our first step is to change the type of the number of seasons into an integer and delete all the characters
 data = df %>% select(-c(tags,languages,actors,view_rating,rotten_tomatoes_score,metacritic_score,production_house,netflix_link,imdb_link,tmdb_trailer,trailer_site))
 
-#Since there's some years in the genre category, we decided to replace them with NAN values since a year isn't a genre
-data=mutate(data,genre_2=ifelse(substr(genre_2,1,1)=='1' |substr(genre_2,1,1)=='2',NA,genre_2))
+#Date -> keep only year
+data = data %>% mutate(release_date=substr(release_date,8,12))
+colnames(data)[13] <- "release_year"
+
+#Date -> keep only year
+data = data %>% mutate(data,netflix_date=substr(netflix_date,1,4))
+colnames(data)[14] <- "release_netflix_year"
+
+#On remove le Dollar de boxoffice
+data= data %>% mutate(data,box_office=substr(box_office,2,15))
 
 #For the column Genre, we split it into two different columns since each serie can have 2 differents Genres
 data_genres <- data %>% separate(genre,c("genre_1","genre_2","genre_3","genre_4","genre_5","genre_6"),",",TRUE)
