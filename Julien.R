@@ -2,9 +2,15 @@
 source("./packages.R")
 source("./functions.R")
 
+kgl_auth(creds_file = 'kaggle.json')
+response <- kgl_datasets_download_all(owner_dataset = "ashishgup/netflix-rotten-tomatoes-metacritic-imdb")
+
+download.file(response[["url"]], "netflix-rotten-tomatoes-metacritic-imdb.zip", mode="wb")
+unzip_result <- unzip("netflix-rotten-tomatoes-metacritic-imdb.zip", overwrite = TRUE)
+
 
 #Reading the csv file and setting types
-df<- read_csv("Web_series_data.csv", 
+df<- read_csv("netflix-rotten-tomatoes-metacritic-imdb.csv", 
               col_names = c("title","genre","tags","languages","series_or_movies","hidden_gem_score",
                             "country_availability","run_time","director","writer","actors",
                             "view_rating","imdb_scrore","rotten_tomatoes_score","metacritic_score",
