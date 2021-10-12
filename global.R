@@ -47,7 +47,7 @@ data_genre_availability = clean_multiple_values(vecteur_genre,data_genre_availab
 data_genre_availability = data_genre_availability %>% select(-c(genre))
 
 data_merge <- merge(data,data_genre_availability,by=c("title","release_year")) %>% merge(data_country_availability,by=c("title","release_year"))
-view(head(data_merge))
+view((data_merge))
 
 
 
