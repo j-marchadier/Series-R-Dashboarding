@@ -58,17 +58,23 @@ data_genre_availability = clean_multiple_values(vecteur_genre,data_genre_availab
 data_genre_availability = data_genre_availability %>% select(-c(genre))
 
 #Our final data sets
-final_data_genre <- merge(data,data_genre_availability,by=c("title","release_year")) %>% select(-c(genre))
-final_data_country <- merge(data,data_country_availability,by=c("title","release_year")) %>% select(-c(country_availability))
+data_genre_merge <- merge(data,data_genre_availability,by=c("title","release_year")) %>% select(-c(genre))
+data_country_merge <- merge(data,data_country_availability,by=c("title","release_year")) %>% select(-c(country_availability))
 
-final_data_country = pivot_longer(final_data_country,
+final_data_country = pivot_longer(data_country_merge,
                                   !c(title,release_year,genre,series_or_movies,hidden_gem_score,run_time,director,
                                      writer,imdb_scrore,awards_received,awards_nominated,box_office,summary,
                                      imdb_vote,poster,release_netflix_year)
                                   ,names_to = "country",values_to = "is_country")
-view(head(final_data_country,100))
-#Remove tampon variable
-rm(data_country_availability,data_genre_availability,data_genre_sep,df,vecteur_genre,all_country_availability,clean_multiple_values)
+
+data_pivot_genre=pivot_longer(data_genre_merge, c(Crime,Comedy,Drama,Animation,Short,Action,Adventure,
+                                                  Music,Thriller,Biography,Documentary,Mystery,Horror,
+                                                  `Sci-Fi`,Family,Romance,Musical,Fantasy,`Film-Noir`,
+                                                  `Reality-TV`,`Talk-Show`,`Game-Show`,News,Sport,War,
+                                                  History,Adult,Western),
+                              names_to = "genre", values_to = "is_genre")
+#Remove tampon variables
+rm(data_country_availability,data_genre_availability,data_genre_sep,df,vecteur_genre,all_country_availability,clean_multiple_values,data_country_merge,data_genre_merge)
 
 
 
