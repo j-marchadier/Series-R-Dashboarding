@@ -12,6 +12,8 @@ if (file.exists("netflix-rotten-tomatoes-metacritic-imdb.zip")) {
   file.remove("netflix-rotten-tomatoes-metacritic-imdb.zip")
 }
 
+rm(response,unzip_result)
+
 #Reading the csv file and setting types
 df<- read_csv("netflix-rotten-tomatoes-metacritic-imdb.csv", 
               col_names = c("title","genre","tags","languages","series_or_movies","hidden_gem_score",
@@ -26,7 +28,7 @@ df<- read_csv("netflix-rotten-tomatoes-metacritic-imdb.csv",
 
 #We at first clean the dataset :
 #Our first step is to change the type of the number of seasons into an integer and delete all the characters
-data = df %>% select(-c(tags,languages,actors,view_rating,rotten_tomatoes_score,metacritic_score,production_house,netflix_link,imdb_link,tmdb_trailer,trailer_site))
+data = df %>% select(-c(image,tags,languages,actors,view_rating,rotten_tomatoes_score,metacritic_score,production_house,netflix_link,imdb_link,tmdb_trailer,trailer_site))
 
 #Date -> keep only year
 data = data %>% mutate(release_year=substr(release_date,8,12), 
@@ -38,7 +40,7 @@ data= data %>% mutate(data,box_office=substr(box_office,2,15))
 
 ########### Clean Country available ############
 all_country_availability = unlist(strsplit(data$country_availability[5], ","))
-data_country_availability = data %>% select(-c(genre,series_or_movies,hidden_gem_score,run_time,director,writer,imdb_scrore,awards_received,awards_nominated,box_office,release_netflix_year,summary,imdb_vote,image,poster))
+data_country_availability = data %>% select(-c(genre,series_or_movies,hidden_gem_score,run_time,director,writer,imdb_scrore,awards_received,awards_nominated,box_office,release_netflix_year,summary,imdb_vote,poster))
 
 #function 
 data_country_availability = clean_multiple_values(all_country_availability,data_country_availability,data$country_availability)
@@ -49,16 +51,25 @@ data_genre_sep <- data %>% separate(genre,c("genre_1","genre_2","genre_3","genre
 vecteur_genre=unique(c(data_genre_sep$genre_1,data_genre_sep$genre_2,data_genre_sep$genre_3,data_genre_sep$genre_4,data_genre_sep$genre_5,data_genre_sep$genre_6))
 vecteur_genre=vecteur_genre[vecteur_genre!=""]
 vecteur_genre=head(vecteur_genre,-1)
-data_genre_availability = data %>% select(-c(series_or_movies,country_availability,hidden_gem_score,run_time,director,writer,imdb_scrore,awards_received,awards_nominated,box_office,release_netflix_year,summary,imdb_vote,image,poster))
+data_genre_availability = data %>% select(-c(series_or_movies,country_availability,hidden_gem_score,run_time,director,writer,imdb_scrore,awards_received,awards_nominated,box_office,release_netflix_year,summary,imdb_vote,poster))
 
 #function
 data_genre_availability = clean_multiple_values(vecteur_genre,data_genre_availability,data$genre)
 data_genre_availability = data_genre_availability %>% select(-c(genre))
 
+#Our final data sets
+final_data_genre <- merge(data,data_genre_availability,by=c("title","release_year")) %>% select(-c(genre))
+final_data_country <- merge(data,data_country_availability,by=c("title","release_year")) %>% select(-c(country_availability))
 
-total <- merge(data,data_genre_availability,by=c("title","release_year"))
-total = merge(total , data_country_availability,by=c("title","release_year"))
-view(head(total))
+final_data_country = pivot_longer(final_data_country,
+                                  !c(title,release_year,genre,series_or_movies,hidden_gem_score,run_time,director,
+                                     writer,imdb_scrore,awards_received,awards_nominated,box_office,summary,
+                                     imdb_vote,poster,release_netflix_year)
+                                  ,names_to = "country",values_to = "is_country")
+view(head(final_data_country,100))
+#Remove tampon variable
+rm(data_country_availability,data_genre_availability,data_genre_sep,df,vecteur_genre,all_country_availability,clean_multiple_values)
+
 
 
 
