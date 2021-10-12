@@ -8,6 +8,9 @@ response <- kgl_datasets_download_all(owner_dataset = "ashishgup/netflix-rotten-
 download.file(response[["url"]], "netflix-rotten-tomatoes-metacritic-imdb.zip", mode="wb")
 unzip_result <- unzip("netflix-rotten-tomatoes-metacritic-imdb.zip", overwrite = TRUE)
 
+if (file.exists("netflix-rotten-tomatoes-metacritic-imdb.zip")) {
+  file.remove("netflix-rotten-tomatoes-metacritic-imdb.zip")
+}
 
 #Reading the csv file and setting types
 df<- read_csv("netflix-rotten-tomatoes-metacritic-imdb.csv", 
