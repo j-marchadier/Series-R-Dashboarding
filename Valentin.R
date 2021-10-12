@@ -47,12 +47,18 @@ data_genre_availability = clean_multiple_values(vecteur_genre,data_genre_availab
 data_genre_availability = data_genre_availability %>% select(-c(genre))
 
 ##### Merge #####
-data_merge <- merge(data,data_genre_availability,by=c("title","release_year")) %>% 
-  merge(data_country_availability,by=c("title","release_year")) %>% 
-  select(-c(genre,country_availability))
-view(head(data_merge))
-data_final=pivot_longer(data_merge, !c("date", "heure"), names_to = "pollutant", values_to = "value")
-
+data_genre_merge <- merge(data,data_genre_availability,by=c("title","release_year")) %>% 
+  #merge(data_country_availability,by=c("title","release_year")) %>% 
+  #select(-c(genre,country_availability))
+  select(-c(genre))
+####Pivot####
+data_pivot_genre=pivot_longer(data_genre_merge, c(Crime,Comedy,Drama,Animation,Short,Action,Adventure,
+                                      Music,Thriller,Biography,Documentary,Mystery,Horror,
+                                      `Sci-Fi`,Family,Romance,Musical,Fantasy,`Film-Noir`,
+                                      `Reality-TV`,`Talk-Show`,`Game-Show`,News,Sport,War,
+                                      History,Adult,Western),
+                                      names_to = "genre", values_to = "is_genre")
+view(head(data_pivot_genre))
 
 
 
