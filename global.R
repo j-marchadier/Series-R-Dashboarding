@@ -60,7 +60,9 @@ data_genre_availability = data_genre_availability %>% select(-c(genre))
 #Our final data sets
 data_genre_merge <- merge(data,data_genre_availability,by=c("title","release_year")) %>% select(-c(genre))
 data_country_merge <- merge(data,data_country_availability,by=c("title","release_year")) %>% select(-c(country_availability))
-
+#We decided to work with 2 different final databases, one to work with the
+#countries and the other to work with the Genres. We are still able to make 
+#graphs with both if we merge.  
 final_data_country = pivot_longer(data_country_merge,
                                   !c(title,release_year,genre,series_or_movies,hidden_gem_score,run_time,director,
                                      writer,imdb_scrore,awards_received,awards_nominated,box_office,summary,
