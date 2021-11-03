@@ -1,6 +1,5 @@
 #Loading the packages we need
-source("./packages.R")
-source("./functions.R")
+source("../functions.R")
 
 kgl_auth(creds_file = 'kaggle.json')
 response <- kgl_datasets_download_all(owner_dataset = "ashishgup/netflix-rotten-tomatoes-metacritic-imdb")
@@ -25,7 +24,6 @@ df<- read_csv("netflix-rotten-tomatoes-metacritic-imdb.csv",
               col_types = "cffffdcffccccddddcccccccdcccc",
               skip =1)
 
-
 #We at first clean the dataset :
 #Our first step is to change the type of the number of seasons into an integer and delete all the characters
 data = df %>% select(-c(image,tags,languages,actors,view_rating,rotten_tomatoes_score,metacritic_score,production_house,netflix_link,imdb_link,tmdb_trailer,trailer_site))
@@ -35,8 +33,9 @@ data = data %>% mutate(release_year=substr(release_date,8,12),
                        release_netflix_year=substr(netflix_date,1,4)) %>% 
   select( -c(release_date,netflix_date))
 
-#On remove le Dollar de boxoffice
-data= data %>% mutate(data,box_office=substr(box_office,2,15))
+#On remove le Dollar ainsi que les virgules de boxoffice, il devient un double
+data= data %>% mutate(data,box_office=substr(box_office,2,nchar(box_office)))
+data$box_office <- as.numeric(gsub(",","",data$box_office))
 
 ########### Clean Country available ############
 all_country_availability = unlist(strsplit(data$country_availability[5], ","))
@@ -85,4 +84,25 @@ final_data_country = filter(data_country,is_country==TRUE) %>%
 
 #Remove tampon variables
 rm(data_country_availability,data_genre_availability,data_genre_sep,df,vecteur_genre,all_country_availability,clean_multiple_values,data_country_merge,data_genre_merge,data_genre,data_country)
+
+final_data_genre %>%
+  count(genre) %>%
+    mutate(perc = n*100 / nrow(final_data_genre)) -> data_pie
+data_pie$perc=round(data_pie$perc,2)
+options(digits=2)
+
+data_pie$genre=data_pie$genre[order(data_pie$perc)];data_pie$perc=sort(data_pie$perc)
+data_pie$genre.factor=factor(data_pie$genre,levels=as.character(data_pie$genre))
+
+names(final_data_country)[names(final_data_country) == 'country'] <- 'region'
+fuse= final_data_country %>% select(c(region, hidden_gem_score))
+data_map <- fuse %>% group_by(region) %>% 
+  dplyr::summarize(hidden_gem_score=mean(hidden_gem_score,na.rm=TRUE))
+data_map
+mapdata=map_data("world")
+data_map=left_join(mapdata,data_map,by="region")
+data_map=data_map %>% filter(!is.na(data_map$hidden_gem_score))
+rm(fuse,mapdata)
+
+
 

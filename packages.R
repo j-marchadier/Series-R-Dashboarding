@@ -4,7 +4,8 @@ library(ggplot2)
 library(shiny)
 library(gapminder)
 library(devtools)
-
+library(scales)
+library(shinydashboard)
 #install.packages(c("devtools"))
 #devtools::install_github("ldurazo/kaggler")
 

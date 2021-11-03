@@ -76,8 +76,43 @@ data_pivot_genre=pivot_longer(data_genre_merge, c(Crime,Comedy,Drama,Animation,S
 #Remove tampon variables
 rm(data_country_availability,data_genre_availability,data_genre_sep,df,vecteur_genre,all_country_availability,clean_multiple_values,data_country_merge,data_genre_merge)
 
+ggplot(data, aes(x=`imdb_vote`)) + geom_histogram(bins=10)+
+  #scale_x_continuous(limits=c(0, 700000))+
+  #scale_y_continuous(limits=c(0, 1000))
 
 
 
+ggplot(data, aes(x=factor(release_year),y=`box_office`)) +
+  theme(axis.text.x = element_text(angle = 90,vjust=0.5)) +
+  xlab("Release year")+
+  ylab("Box office moyen")+
+  stat_summary(fun=mean,geom="line",size=0.3, color="red",aes(group=1))+
+  scale_x_discrete(breaks = scales::pretty_breaks(n = 10))
 
 
+ggplot(tips2, aes(x = "", y = perc,fill = genre.factor)) +
+  geom_bar(stat = "identity",color="white")+
+  coord_polar("y",start=0)+
+  geom_text(aes(label = paste(round(perc / sum(perc) * 100, 1), "%","\n", genre)),size=tips2$perc/4.5,
+            position = position_stack(vjust = 0.55)) +
+  ggtitle("Domination of the different genres")+
+  theme(plot.title = element_text(hjust=0.5,size=10),
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        panel.grid=element_blank(),
+        panel.border=element_blank(),
+        legend.title=element_text(hjust=0.5))+
+  guides(fill=guide_legend(reverse=TRUE))+
+  scale_fill_discrete(name="Genres")
+
+
+ggplot(mapdata,aes(x=long,y=lat,group=group))+
+  geom_polygon(aes(fill=hidden_gem_score),color="black")+
+  ggtitle("Moyenne du Score Hidden Gem selon les Pays")+
+  scale_fill_gradient(name="Hidden Gem Score",low="orange",high="purple",na.value="grey50")+
+  theme(axis.text.x=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks=element_blank(),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank())
