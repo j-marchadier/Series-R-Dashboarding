@@ -6,15 +6,14 @@
 #
 #    http://shiny.rstudio.com/
 #
-source("../packages.R")
 source("../global.R")
-source("../functions.R")
-source("../clean_country.R")
-source("../clean_genre.R")
-source("../trace_histo.R")
-source("../trace_map_plot.R")
-source("../trace_geom_plot.R")
-source("../trace_pie_chart.R")
+source("../Fonctions/functions.R")
+source("../Fonctions/clean_country.R")
+source("../Fonctions/clean_genre.R")
+source("../Fonctions/trace_histo.R")
+source("../Fonctions/trace_map_plot.R")
+source("../Fonctions/trace_geom_plot.R")
+source("../Fonctions/trace_pie_chart.R")
 
 
 server <- function(input, output) {

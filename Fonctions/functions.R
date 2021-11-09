@@ -6,6 +6,5 @@ clean_multiple_values <- function(list_id,data_values,col_needed){
       dplyr::select(name)
     data_values[, i] <- v
   }
-  #data_values = data_values %>% select(-c(country_availability))
   data_values
 }

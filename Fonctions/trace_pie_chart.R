@@ -19,6 +19,4 @@ trace_pie_chart <- function(data){
     guides(fill=guide_legend(reverse=TRUE))+
     scale_fill_discrete(name="Genres")   
     
-    
-  
 }

@@ -1,4 +1,4 @@
-source("../functions.R")
+source("../Fonctions/functions.R")
 
 clean_country<- function(data){
   

@@ -1,6 +1,4 @@
-#Loading the packages we need
-source("../functions.R")
-
+#Downloading datas
 kgl_auth(creds_file = 'kaggle.json')
 response <- kgl_datasets_download_all(owner_dataset = "ashishgup/netflix-rotten-tomatoes-metacritic-imdb")
 
@@ -33,6 +31,6 @@ data = data %>% mutate(release_year=substr(release_date,8,12),
                        release_netflix_year=substr(netflix_date,1,4)) %>% 
   select( -c(release_date,netflix_date))
 
-#On remove le Dollar ainsi que les virgules de boxoffice, il devient un double
+#We remove the Dollar and the comma in the box_office values, they are now double variables
 data= data %>% mutate(data,box_office=substr(box_office,2,nchar(box_office)))
 data$box_office <- as.numeric(gsub(",","",data$box_office))
