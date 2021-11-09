@@ -27,7 +27,7 @@ df<- read_csv("netflix-rotten-tomatoes-metacritic-imdb.csv",
 data = df %>% select(-c(image,tags,languages,actors,view_rating,rotten_tomatoes_score,metacritic_score,production_house,netflix_link,imdb_link,tmdb_trailer,trailer_site))
 
 #Date -> keep only year
-data = data %>% mutate(release_year=substr(release_date,8,12), 
+data = data %>% mutate(release_year=str_sub(release_date,-4), 
                        release_netflix_year=substr(netflix_date,1,4)) %>% 
   select( -c(release_date,netflix_date))
 

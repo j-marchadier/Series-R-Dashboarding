@@ -5,7 +5,7 @@ trace_map_plot <- function(data){
     ggplot(aes(x=long,y=lat,group=group))+
     geom_polygon(aes(fill=hidden_gem_score),color="black")+
     ggtitle("Moyenne du Score Hidden Gem selon les Pays")+
-    scale_fill_gradient(name="Hidden Gem Score",low="orange",high="purple",na.value="grey50")+
+    scale_fill_gradient(name="Hidden Gem Score",low="orange",high="purple",na.value="white")+
     theme(axis.text.x=element_blank(),
           axis.text.y=element_blank(),
           axis.ticks=element_blank(),

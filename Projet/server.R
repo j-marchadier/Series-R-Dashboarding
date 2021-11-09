@@ -19,7 +19,7 @@ source("../Fonctions/trace_pie_chart.R")
 server <- function(input, output) {
     
     filter1 <- reactive({
-        if(input$v_select == "Series and Movies"){
+        if(input$v_select == "Series and Movies"){#Filtering according to the type
             data
         } else {
             data %>%
@@ -29,7 +29,7 @@ server <- function(input, output) {
     filter2 <- reactive({
         if(input$score == "All"){
             filter1()
-        } else if (input$score=="Best 30 Scores"){
+        } else if (input$score=="Best 30 Scores"){#Filtering according to score
             filter1()[1:30,]
         } else if (input$score=="Best 100 Scores"){
             filter1()[1:100,]
@@ -39,16 +39,16 @@ server <- function(input, output) {
     
     
     df_filtr <- reactive({
-        if(input$runtime_select == "All"){
+        if(input$runtime_select == "All"){#Filtering according to the run time
             filter2()
         } else {
             filter2() %>%
                 filter(run_time == input$runtime_select)}})
     
     
-    #We create a database in order to exploit the country information
-    df_map <- reactive({
     
+    df_map <- reactive({
+    #We create a database in order to exploit the country information
     final_data_country= clean_country(df_filtr())
     
     #We create here the database needed to plot the map
@@ -57,13 +57,13 @@ server <- function(input, output) {
         dplyr::summarize(hidden_gem_score=mean(hidden_gem_score,na.rm=TRUE))
     mapdata=map_data("world")
     df_map=left_join(mapdata,data_map,by="region")
-    df_map=df_map %>% filter(!is.na(df_map$hidden_gem_score))
     
     return(df_map)
     })
     
-    #We create a database in order to exploit the genre information
+    
     df_pie <- reactive({
+    #We create a database in order to exploit the genre information
     final_data_genre=clean_genre(df_filtr())    
         
     #We create here our database which goes into our pie chart ggplot

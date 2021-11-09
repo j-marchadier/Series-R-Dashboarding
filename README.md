@@ -64,8 +64,6 @@ Note that there is no official Netflix API.
 
 "Hidden Gem Score" is calculated using low review count and high rating. Lower the review count and higher the user rating, higher the hidden gem score.
 
-Use the `README.md` to get started.
-
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
@@ -89,6 +87,8 @@ To get a local copy, run follow this simple step.
 
 You need to install packages and call them to run the project.
 The simpler way is to run in RStudio the few lines in the packages.R file.
+After that, you can see the dashboard on the url below :
+http://127.0.0.1:3711/
 
 ### Built With
 
@@ -175,16 +175,26 @@ We have once again a particular Dataset for the countries and another for the ge
 
 ## Analysis Report
 
+We can show several things according to the user's desire thanks to our filters.
+For example :
+* Thanks to the graph representing the evolution of the world box office we can see that the curve follows an increasing trend for the movies which isn't the case for the series.
 
+* Whatever the filter applied, we can see that the 2 dominant genres are Drama and Comedy (for both series and movies).
 
+* We want to observe in which region are the best productions. In order to have our information we look at the map with the best 30 score filter.
+  We can see that in general, North America and Europe concentrate the most high rated movies.
+  The above examples show only a small part of what can be represented with this type of dashboard. It's up to you to draw the one you like.
+
+Warning:
+Applying too many filters can cause errors due to lack of data.
 
 
 
 <!-- CONTACT -->
 ## Contact
 
-MARCHADIER Julien - julien.marchadier@edu.esiee.fr
-REBUFFEY Valentin - valentin.rebuffey@edu.esiee.fr  
+* MARCHADIER Julien - julien.marchadier@edu.esiee.fr
+* REBUFFEY Valentin - valentin.rebuffey@edu.esiee.fr  
 
 Project Link: [https://github.com/juju312000/Series_R_Dashboarding](https://github.com/juju312000/Series_R_Dashboarding)
 
