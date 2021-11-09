@@ -7,51 +7,93 @@
 #    http://shiny.rstudio.com/
 #
 source("../packages.R")
-source("../Valentin.R")
+source("../global.R")
+source("../functions.R")
+source("../clean_country.R")
+source("../clean_genre.R")
+source("../trace_histo.R")
+source("../trace_map_plot.R")
+source("../trace_geom_plot.R")
+source("../trace_pie_chart.R")
 
-# Define server logic required to draw a histogram
+
 server <- function(input, output) {
     
-    output$distPlot <- renderPlot({
-        ggplot(data, aes(x=`imdb_vote`)) + geom_histogram(bins=10)
-    })
-    output$distPlot2 <- renderPlot({
-        ggplot(data_map,aes(x=long,y=lat,group=group))+
-            geom_polygon(aes(fill=hidden_gem_score),color="black")+
-            ggtitle("Moyenne du Score Hidden Gem selon les Pays")+
-            scale_fill_gradient(name="Hidden Gem Score",low="orange",high="purple",na.value="grey50")+
-            theme(axis.text.x=element_blank(),
-                  axis.text.y=element_blank(),
-                  axis.ticks=element_blank(),
-                  axis.title.x = element_blank(),
-                  axis.title.y = element_blank())
-        
-    })  
-    output$distPlot3 <- renderPlot({
-        ggplot(data_pie, aes(x = "", y = perc,fill = genre.factor)) +
-            geom_bar(stat = "identity",color="white")+
-            coord_polar("y",start=0)+
-            geom_text(aes(label = paste(round(perc / sum(perc) * 100, 1), "%","\n", genre)),size=data_pie$perc/4.5,
-                      position = position_stack(vjust = 0.55)) +
-            ggtitle("Domination of the different genres")+
-            theme(plot.title = element_text(hjust=0.5,size=10),
-                  axis.title = element_blank(),
-                  axis.text = element_blank(),
-                  axis.ticks = element_blank(),
-                  panel.grid=element_blank(),
-                  panel.border=element_blank(),
-                  legend.title=element_text(hjust=0.5))+
-            guides(fill=guide_legend(reverse=TRUE))+
-            scale_fill_discrete(name="Genres")
-        
+    filter1 <- reactive({
+        if(input$v_select == "Series and Movies"){
+            data
+        } else {
+            data %>%
+                filter(series_or_movies == input$v_select)}})
+    
+    
+    filter2 <- reactive({
+        if(input$score == "All"){
+            filter1()
+        } else if (input$score=="Best 30 Scores"){
+            filter1()[1:30,]
+        } else if (input$score=="Best 100 Scores"){
+            filter1()[1:100,]
+        } else{
+            filter1()%>% drop_na(imdb_score)
+            tail(filter1(),100)}})
+    
+    
+    df_filtr <- reactive({
+        if(input$runtime_select == "All"){
+            filter2()
+        } else {
+            filter2() %>%
+                filter(run_time == input$runtime_select)}})
+    
+    
+    #We create a database in order to exploit the country information
+    df_map <- reactive({
+    
+    final_data_country= clean_country(df_filtr())
+    
+    #We create here the database needed to plot the map
+    fuse= final_data_country %>% select(c(region, hidden_gem_score))
+    data_map <- fuse %>% group_by(region) %>% 
+        dplyr::summarize(hidden_gem_score=mean(hidden_gem_score,na.rm=TRUE))
+    mapdata=map_data("world")
+    df_map=left_join(mapdata,data_map,by="region")
+    df_map=df_map %>% filter(!is.na(df_map$hidden_gem_score))
+    
+    return(df_map)
     })
     
-    output$distPlot4 <- renderPlot({
-        ggplot(data, aes(x=factor(release_year),y=`box_office`)) +
-            theme(axis.text.x = element_text(angle = 90,vjust=0.5)) +
-            xlab("Release year")+
-            ylab("Box office moyen")+
-            stat_summary(fun=mean,geom="line",size=0.3, color="red",aes(group=1))+
-            scale_x_discrete(breaks = scales::pretty_breaks(n = 10))
+    #We create a database in order to exploit the genre information
+    df_pie <- reactive({
+    final_data_genre=clean_genre(df_filtr())    
+        
+    #We create here our database which goes into our pie chart ggplot
+    final_data_genre %>%
+            count(genre) %>%
+            mutate(perc = n*100 / nrow(final_data_genre)) -> df_pie
+    options(digits=2)
+    df_pie$perc=round(df_pie$perc,2)
+    
+        
+    df_pie$genre=df_pie$genre[order(df_pie$perc)];df_pie$perc=sort(df_pie$perc)
+    df_pie$genre.factor=factor(df_pie$genre,levels=as.character(df_pie$genre))
+        
+        return(df_pie)
     })
+    
+    output$histogram <- renderPlot({
+        trace_histo(df_filtr())
+        })
+   
+     output$mapgraph <- renderPlot({
+        trace_map_plot(df_map)
+        })  
+    
+     output$piechart <- renderPlot({
+       trace_pie_chart(df_pie)
+        })
+    
+    output$boxofficechart <- renderPlot({
+        trace_geom_plot(df_filtr())
+        })
 }

@@ -17,7 +17,7 @@ rm(response,unzip_result)
 df<- read_csv("netflix-rotten-tomatoes-metacritic-imdb.csv", 
               col_names = c("title","genre","tags","languages","series_or_movies","hidden_gem_score",
                             "country_availability","run_time","director","writer","actors",
-                            "view_rating","imdb_scrore","rotten_tomatoes_score","metacritic_score",
+                            "view_rating","imdb_score","rotten_tomatoes_score","metacritic_score",
                             "awards_received","awards_nominated","box_office","release_date","netflix_date",
                             "production_house","netflix_link","imdb_link",'summary',"imdb_vote","image",
                             "poster","tmdb_trailer","trailer_site"),
@@ -38,8 +38,10 @@ data= data %>% mutate(data,box_office=substr(box_office,2,nchar(box_office)))
 data$box_office <- as.numeric(gsub(",","",data$box_office))
 
 ########### Clean Country available ############
-all_country_availability = unlist(strsplit(data$country_availability[5], ","))
-data_country_availability = data %>% select(-c(genre,series_or_movies,hidden_gem_score,run_time,director,writer,imdb_scrore,awards_received,awards_nominated,box_office,release_netflix_year,summary,imdb_vote,poster))
+all_country_availability = unlist(strsplit(data$country_availability, ","))
+all_country_availability=unique(all_country_availability)
+all_country_availability=all_country_availability[!is.na(all_country_availability)]
+data_country_availability = data %>% select(-c(genre,series_or_movies,hidden_gem_score,run_time,director,writer,imdb_score,awards_received,awards_nominated,box_office,release_netflix_year,summary,imdb_vote,poster))
 
 #function 
 data_country_availability = clean_multiple_values(all_country_availability,data_country_availability,data$country_availability)
@@ -49,8 +51,8 @@ data_country_availability = data_country_availability %>% select(-c(country_avai
 data_genre_sep <- data %>% separate(genre,c("genre_1","genre_2","genre_3","genre_4","genre_5","genre_6"),", ",TRUE)
 vecteur_genre=unique(c(data_genre_sep$genre_1,data_genre_sep$genre_2,data_genre_sep$genre_3,data_genre_sep$genre_4,data_genre_sep$genre_5,data_genre_sep$genre_6))
 vecteur_genre=vecteur_genre[vecteur_genre!=""]
-vecteur_genre=head(vecteur_genre,-1)
-data_genre_availability = data %>% select(-c(series_or_movies,country_availability,hidden_gem_score,run_time,director,writer,imdb_scrore,awards_received,awards_nominated,box_office,release_netflix_year,summary,imdb_vote,poster))
+vecteur_genre=vecteur_genre[!is.na(vecteur_genre)]
+data_genre_availability = data %>% select(-c(series_or_movies,country_availability,hidden_gem_score,run_time,director,writer,imdb_score,awards_received,awards_nominated,box_office,release_netflix_year,summary,imdb_vote,poster))
 
 #function
 data_genre_availability = clean_multiple_values(vecteur_genre,data_genre_availability,data$genre)
@@ -64,15 +66,13 @@ data_country_merge <- merge(data,data_country_availability,by=c("title","release
 #graphs with both if we merge.  
 data_country = pivot_longer(data_country_merge,
                                   !c(title,release_year,genre,series_or_movies,hidden_gem_score,run_time,director,
-                                     writer,imdb_scrore,awards_received,awards_nominated,box_office,summary,
+                                     writer,imdb_score,awards_received,awards_nominated,box_office,summary,
                                      imdb_vote,poster,release_netflix_year)
                                   ,names_to = "country",values_to = "is_country")
 
-data_genre=pivot_longer(data_genre_merge, c(Crime,Comedy,Drama,Animation,Short,Action,Adventure,
-                                                  Music,Thriller,Biography,Documentary,Mystery,Horror,
-                                                  `Sci-Fi`,Family,Romance,Musical,Fantasy,`Film-Noir`,
-                                                  `Reality-TV`,`Talk-Show`,`Game-Show`,News,Sport,War,
-                                                  History,Adult,Western),
+data_genre=pivot_longer(data_genre_merge, !c(title,release_year,series_or_movies,hidden_gem_score,country_availability,run_time,director,
+                                             writer,imdb_score,awards_received,awards_nominated,box_office,summary,
+                                             imdb_vote,poster,release_netflix_year),
                               names_to = "genre", values_to = "is_genre")
 
 #Remove all False is_genre since it's not a very pertinent information and remove the boolean column is_genre
@@ -85,6 +85,8 @@ final_data_country = filter(data_country,is_country==TRUE) %>%
 #Remove tampon variables
 rm(data_country_availability,data_genre_availability,data_genre_sep,df,vecteur_genre,all_country_availability,clean_multiple_values,data_country_merge,data_genre_merge,data_genre,data_country)
 
+####
+
 final_data_genre %>%
   count(genre) %>%
     mutate(perc = n*100 / nrow(final_data_genre)) -> data_pie
@@ -93,16 +95,20 @@ options(digits=2)
 
 data_pie$genre=data_pie$genre[order(data_pie$perc)];data_pie$perc=sort(data_pie$perc)
 data_pie$genre.factor=factor(data_pie$genre,levels=as.character(data_pie$genre))
+####
 
+####
 names(final_data_country)[names(final_data_country) == 'country'] <- 'region'
 fuse= final_data_country %>% select(c(region, hidden_gem_score))
 data_map <- fuse %>% group_by(region) %>% 
   dplyr::summarize(hidden_gem_score=mean(hidden_gem_score,na.rm=TRUE))
-data_map
 mapdata=map_data("world")
 data_map=left_join(mapdata,data_map,by="region")
 data_map=data_map %>% filter(!is.na(data_map$hidden_gem_score))
 rm(fuse,mapdata)
+####
 
+
+data = data[order(data$imdb_score,decreasing=T),]
 
 

@@ -6,25 +6,31 @@
 #
 #    http://shiny.rstudio.com/
 #
-source("../packages.R")
 
 # Define UI for application that draws a histogram
 ui <- dashboardPage(
     
-    # Application title
     dashboardHeader(title= "Movies and Series Analysis"),
-    dashboardSidebar(),
-    dashboardBody(
-        box(plotOutput("distPlot")),
-        box(plotOutput("distPlot2")),
-        box(plotOutput("distPlot3")),
-        box(plotOutput("distPlot4"))
+    dashboardSidebar(
+        sidebarMenu(
+            selectInput("v_select",label= "Type :",choices=c("Series and Movies","Movie","Series"),
+                        selected="Series and Movies"),
+            selectInput("score","Score :",c("All","Best 30 Scores","Best 100 Scores","Worse 100 Scores"),
+                        selected="All"),
+            selectInput("runtime_select",label= "Runtime :",choices=c("All",
+                        "< 30 minutes","30-60 mins","1-2 hour","> 2 hrs"),selected="All")
+            
+            
         
-    ),
-    mainPanel(
-        plotOutput("distPlot"),
-        plotOutput("distPlot2"),
-        plotOutput("distPlot3"),
-        plotOutput("distPlot4")
-    )
+    )),
+    dashboardBody(
+        fluidRow(
+        
+        box(plotOutput("histogram"),align="center"),
+        box(plotOutput("mapgraph"),align="center"),
+        box(plotOutput("piechart"),align="center"),
+        box(plotOutput("boxofficechart"),align="center")
+        
+        
+    ))
 )    

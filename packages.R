@@ -1,3 +1,8 @@
+install.packages(c("devtools","GGally","tidyverse","ggplot2","shiny","gapminder","scales","shinydashboard"
+                   ,"readr"))
+devtools::install_github("ldurazo/kaggler")
+
+
 library(GGally)
 library(tidyverse)
 library(ggplot2)
@@ -6,8 +11,5 @@ library(gapminder)
 library(devtools)
 library(scales)
 library(shinydashboard)
-#install.packages(c("devtools"))
-#devtools::install_github("ldurazo/kaggler")
-
 library(readr)
 library(kaggler)
